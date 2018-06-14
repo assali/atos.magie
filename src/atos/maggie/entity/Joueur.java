@@ -30,7 +30,8 @@ public class Joueur implements Serializable {
         N_A_PAS_LA_MAIN,
         A_LA_MAIN,
         SOMMEIL_PROFOND,
-        PERDU
+        PERDU,
+        GAGNE
 
     }
     private static final long serialVersionUID = 1L;
@@ -38,7 +39,7 @@ public class Joueur implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private EtatJoueur etat;
 

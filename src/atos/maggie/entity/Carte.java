@@ -38,7 +38,7 @@ public class Carte implements Serializable {
     private Long id;
 
     //@Column it is NOT obligatory 
-    @Column
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Ingredient ingredient;
 
