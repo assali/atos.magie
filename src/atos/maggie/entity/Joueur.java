@@ -48,13 +48,33 @@ public class Joueur implements Serializable {
 
    // @Column
     private String avatar;
+    
+    @Column(nullable = false)
+    private long ordre;
+
+    public long getOrdre() {
+        return ordre;
+    }
+
+    public void setOrdre(long ordre) {
+        this.ordre = ordre;
+    }
+
+    public Partie getPartie() {
+        return partie;
+    }
+
+    public void setPartie(Partie partie) {
+        this.partie = partie;
+    }
 
     //to avoid null value when we calculate
+    //Long and long for insuring null value
     @Column(nullable = false)
-    private long nbPartiesGagnees;
+    private Long nbPartiesGagnees;
 
     @Column(nullable = false)
-    private long nbPartiejouees;
+    private Long nbPartiejouees;
 
     @OneToMany(mappedBy = "joueur")
     private List<Carte> cartes = new ArrayList<>();
