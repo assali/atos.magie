@@ -7,6 +7,7 @@ package atos.maggie.dao;
 
 import atos.maggie.entity.Joueur;
 import atos.maggie.entity.Partie;
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.Persistence;
@@ -42,8 +43,21 @@ public class PartieDAO {
         //Query query = em.createQuery("Select p from Partie p where p.id=: idPartie");
         //query.setParameter("idPartie", partieId);
         //return (Partie) query.getSingleResult();
-        
+
         //the method find is simpler than make a query
         return em.find(Partie.class, partieId);
     }
+
+    public long recupererNbJoueursParPartieId(long partieId) {
+        EntityManager em = Persistence.createEntityManagerFactory("PU").createEntityManager();
+        Query query = em.createQuery("Select COUNT(j.id) from Joueur j Join j.partie p where p.id=:idPartie");
+        query.setParameter("idPartie", partieId);
+        return (long) query.getSingleResult();
+    }
+
+    public void demarrerPartie() {
+
+    }
+
+
 }

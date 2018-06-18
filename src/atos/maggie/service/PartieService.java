@@ -14,14 +14,19 @@ import java.util.List;
  * @author Administrateur
  */
 public class PartieService {
-    
+
     private PartieDAO dao = new PartieDAO();
-    
+
+    /**
+     * Liste les parties dont aucun joueur n'est à l'etat a la main ou gagne
+     *
+     * @return
+     */
     public List<Partie> listerPartiesNonDemarrees() {
         return dao.listerPartiesNonDemarrees();
-        
+
     }
-    
+
     //we pass the  paramters 
     public Partie creerNouvellePartie(String nom) {
         Partie p = new Partie();
@@ -29,5 +34,18 @@ public class PartieService {
         dao.ajouterPartie(p);
         return p;
     }
-    
+
+    public Partie recupererPartieparId(long partieId) {
+        return dao.RecherchePartieParId(partieId);
+    }
+
+    public long recupererNbJoueursParPartieId(long partieId) {
+        return (long) dao.recupererNbJoueursParPartieId(partieId);
+
+    }
+
+    public void demarrerPartie() {
+        dao.demarrerPartie();
+    }
+
 }

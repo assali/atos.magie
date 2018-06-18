@@ -5,6 +5,8 @@
  */
 package atos.maggie.test;
 
+import atos.maggie.entity.Joueur;
+import atos.maggie.entity.Partie;
 import atos.maggie.service.JoueurService;
 import atos.maggie.service.PartieService;
 import org.junit.Test;
@@ -19,7 +21,17 @@ public class JoueurServiceTest {
     private JoueurService service = new JoueurService();
     private PartieService partieService = new PartieService();
 
-    @Test
+    //@Test
+    public void ordreJoueursOk() {
+        Partie nouvellePartie = partieService.creerNouvellePartie("ordreJoueursOk");
+
+        service.rejoindrePartie("A", "A", nouvellePartie.getId());
+        service.rejoindrePartie("B", "B", nouvellePartie.getId());
+        Joueur j = service.rejoindrePartie("C", "C", nouvellePartie.getId());
+        assertEquals(8L, j.getOrdre());
+    }
+
+    // @Test
     public void rejoindrePartieOk() {
 
         long id = partieService.creerNouvellePartie("nnn").getId();

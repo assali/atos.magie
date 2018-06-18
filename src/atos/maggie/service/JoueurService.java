@@ -19,7 +19,7 @@ public class JoueurService {
     private JoueurDAO dao = new JoueurDAO();
     private PartieDAO daoPartie = new PartieDAO();
 
-    public void rejoindrePartie(String pseudo, String avatar, long idPartie) {
+    public Joueur rejoindrePartie(String pseudo, String avatar, long idPartie) {
 //recherche si le joueur existe deja
         //boolean isNew = false;
         Joueur joueur = dao.rechercherParPseudo(pseudo);
@@ -48,6 +48,28 @@ public class JoueurService {
             dao.ajoute(joueur);
         }
         dao.modifier(joueur);
+        return joueur;
+    }
 
+    public long rechercheJoueurOrdre1(long partieId) {
+        return dao.rechercheJoueurOrdre1(partieId);
+    }
+
+    public void passeJoueurOrdre1EtatALaMain(long partieId) {
+        dao.passeJoueurOrdre1EtatALaMain(partieId);
+    }
+
+    
+    //Passe Tour
+    public Joueur recupererJoueurProchain(long partieId, long jouerPrecedentId) {
+
+        daoPartie.RecherchePartieParId(partieId);
+
+        return dao.joueurSuivantModifierEtat(dao.rechercherParId(jouerPrecedentId).getOrdre() + 1);
+    }
+    
+    public void passTour(long joueurId)
+    {
+    
     }
 }
