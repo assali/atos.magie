@@ -5,6 +5,7 @@
  */
 package atos.maggie.service;
 
+import atos.maggie.dao.CarteDAO;
 import atos.maggie.dao.JoueurDAO;
 import atos.maggie.dao.PartieDAO;
 import atos.maggie.entity.Joueur;
@@ -16,13 +17,16 @@ import atos.maggie.entity.Partie;
  */
 public class JoueurService {
 
-    private JoueurDAO dao = new JoueurDAO();
+    private JoueurDAO daoJoueur = new JoueurDAO();
     private PartieDAO daoPartie = new PartieDAO();
+    private CarteDAO daoCarte = new CarteDAO();
+    private CarteService servCarte = new CarteService();
+    private PartieService servPartie = new PartieService();
 
     public Joueur rejoindrePartie(String pseudo, String avatar, long idPartie) {
 //recherche si le joueur existe deja
         //boolean isNew = false;
-        Joueur joueur = dao.rechercherParPseudo(pseudo);
+        Joueur joueur = daoJoueur.rechercherParPseudo(pseudo);
 
         if (joueur == null) {
 //Le jouer n'existe pas encore
@@ -30,46 +34,73 @@ public class JoueurService {
             joueur.setPseudo(pseudo);
             joueur.setNbPartiejouees(0L);
             joueur.setNbPartiesGagnees(0L);
-            //isNew=true;
         }
         joueur.setAvatar(avatar);
         joueur.setEtat(Joueur.EtatJoueur.N_A_PAS_LA_MAIN);
-        joueur.setOrdre(dao.rechercheOrdre(idPartie));
+        joueur.setOrdre(daoJoueur.rechercheOrdre(idPartie));
 
         //Do Not Froget to associate in two directions
-        Partie partie = daoPartie.RecherchePartieParId(idPartie);
+        Partie partie = daoPartie.recherchePartieParId(idPartie);
         joueur.setPartie(partie);
         partie.getJoueurs().add(joueur);
-//        if (isNew) {
-//            
-//        }
 
         if (joueur.getId() == null) {
-            dao.ajoute(joueur);
+            daoJoueur.ajoute(joueur);
         }
-        dao.modifier(joueur);
+        daoJoueur.modifier(joueur);
         return joueur;
     }
 
     public long rechercheJoueurOrdre1(long partieId) {
-        return dao.rechercheJoueurOrdre1(partieId);
+        return daoJoueur.rechercheJoueurOrdre1(partieId);
     }
 
     public void passeJoueurOrdre1EtatALaMain(long partieId) {
-        dao.passeJoueurOrdre1EtatALaMain(partieId);
+        daoJoueur.passeJoueurOrdre1EtatALaMain(partieId);
     }
 
-    
     //Passe Tour
-    public Joueur recupererJoueurProchain(long partieId, long jouerPrecedentId) {
+    public void passTour(long partieId, long joueurId) {
+        passerAProchain(partieId, joueurId);
+        servCarte.distribueCarteParJoueurId(joueurId);
 
-        daoPartie.RecherchePartieParId(partieId);
+    }
 
-        return dao.joueurSuivantModifierEtat(dao.rechercherParId(jouerPrecedentId).getOrdre() + 1);
+    //joueur prochain
+    public void passerAProchain(long partieId, long joueurId) {
+
+        Joueur j = daoJoueur.rechercherParId(joueurId);
+       daoJoueur.modifierJoueurEtat(partieId, joueurId, j.getOrdre(), Joueur.EtatJoueur.N_A_PAS_LA_MAIN);
+        long ordreProchain;
+        boolean prochainNonTrouve = true;
+        while (!servPartie.finPartie(partieId)) {
+            
+            while (prochainNonTrouve) {
+              
+                if (j.getOrdre() + 1 > daoJoueur.recupereNbJoueursALaPartie(partieId)) {
+                    ordreProchain = 1;
+                } else {
+                    ordreProchain = j.getOrdre() + 1;
+                }
+                Joueur prochain = daoJoueur.recupererJoueurProchain(partieId, ordreProchain);
+
+                if ((prochain.getEtat() == Joueur.EtatJoueur.PERDU) || (prochain.getEtat() == Joueur.EtatJoueur.SOMMEIL_PROFOND)) {
+                    ordreProchain++;
+
+                }
+               
+            }
+             daoJoueur.modifierJoueurEtat(partieId, prochain.getId(), ordreProchain, Joueur.EtatJoueur.A_LA_MAIN);
+        }
     }
-    
-    public void passTour(long joueurId)
-    {
-    
+
+    public boolean isJoueurPerdu(long joueurId) {
+        Joueur j = daoJoueur.rechercherParId(joueurId);
+        if (j.getCartes().size() == 0) {
+            return true;
+        }
+        return false;
+
     }
+
 }

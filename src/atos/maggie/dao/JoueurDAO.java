@@ -36,9 +36,43 @@ public class JoueurDAO {
         return joueursTrouves.get(0);
     }
 
+    public long recupereNbJoueursALaPartie(long partieId) {
+        EntityManager em = Persistence.createEntityManagerFactory("PU").createEntityManager();
+        Query query = em.createQuery("Select COUNT(j.id) From Joueur j join j.partie p where p.id= :idPartie");
+        query.setParameter("idPartie", partieId);
+        Object res = query.getSingleResult();
+        if (res == null) {
+            return 1;
+        }
+        return (long) res;
+    }
+
+
     public long rechercheOrdre(long partieId) {
         EntityManager em = Persistence.createEntityManagerFactory("PU").createEntityManager();
         Query query = em.createQuery("Select MAX(j.ordre)+1 From Joueur j join j.partie p where p.id= :idPartie");
+        query.setParameter("idPartie", partieId);
+        Object res = query.getSingleResult();
+        if (res == null) {
+            return 1;
+        }
+        return (long) res;
+    }
+
+    public long rechercheMAXOrdre(long partieId) {
+        EntityManager em = Persistence.createEntityManagerFactory("PU").createEntityManager();
+        Query query = em.createQuery("Select MAX(j.ordre) From Joueur j join j.partie p where p.id= :idPartie");
+        query.setParameter("idPartie", partieId);
+        Object res = query.getSingleResult();
+        if (res == null) {
+            return 1;
+        }
+        return (long) res;
+    }
+
+    public long rechercheMINOrdre(long partieId) {
+        EntityManager em = Persistence.createEntityManagerFactory("PU").createEntityManager();
+        Query query = em.createQuery("Select MIN(j.ordre) From Joueur j join j.partie p where p.id= :idPartie");
         query.setParameter("idPartie", partieId);
         Object res = query.getSingleResult();
         if (res == null) {
@@ -78,8 +112,8 @@ public class JoueurDAO {
         }
         return joueursTrouves.get(0);
     }
-//Demarrer Partie
 
+    //Demarrer Partie
     public void passeJoueurOrdre1EtatALaMain(long partieId) {
         long id = rechercheJoueurOrdre1(partieId);
         EntityManager em = Persistence.createEntityManagerFactory("PU").createEntityManager();
@@ -88,31 +122,39 @@ public class JoueurDAO {
         j.setEtat(Joueur.EtatJoueur.A_LA_MAIN);
         em.merge(j);
         em.getTransaction().commit();;
-
     }
 
     //Passe Tour
-    public Joueur joueurSuivantModifierEtat(long ordreProchain) {
+    public Joueur modifierJoueurEtat(long partieId, long joueurId, long ordre, Joueur.EtatJoueur etat) {
         EntityManager em = Persistence.createEntityManagerFactory("PU").createEntityManager();
-        Query query = em.createQuery("Select j.id from Joueur j where j.ordre=:ordreProchain");
-        query.setParameter("ordreProchain", ordreProchain);
+        Query query = em.createQuery("Select j from Joueur j join j.partie p where j.ordre=:ordre AND j.id=:id AND p.id=:idPartie");
+        query.setParameter("ordre", ordre);
+        query.setParameter("id", joueurId);
+        query.setParameter("idPartie", partieId);
         List<Joueur> joueursTrouves = query.getResultList();
         if (joueursTrouves.isEmpty()) {
             return null;
         } else {
             Joueur j = joueursTrouves.get(0);
-            j.setEtat(Joueur.EtatJoueur.A_LA_MAIN);
+            j.setEtat(etat);
             modifier(j);
 
             return j;
         }
-
     }
 
-    public void passeTour(long joueurId) {
-        EntityManager em = Persistence.createEntityManagerFactory("PU").createEntityManager();
-        Joueur j = rechercherParId(joueurId);
 
+    public Joueur recupererJoueurProchain(long partieId, long ordre) {
+
+        EntityManager em = Persistence.createEntityManagerFactory("PU").createEntityManager();
+        Query query = em.createQuery("select j From Joueur j join j.partie p where j.ordre=:ordre AND p.id=:idPartie");
+        query.setParameter("ordre", ordre);
+        query.setParameter("idPartie", partieId);
+        List<Joueur> joueursTrouves = query.getResultList();
+        if (joueursTrouves.isEmpty()) {
+            return null;
+        }
+        return joueursTrouves.get(0);
     }
 
 }

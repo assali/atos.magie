@@ -21,7 +21,7 @@ import org.junit.Before;
  * @author Administrateur
  */
 public class PartieServiceTest {
-
+    
     private PartieService serviceP = new PartieService();
     private JoueurService serviceJ = new JoueurService();
     private CarteService serviceC = new CarteService();
@@ -30,44 +30,24 @@ public class PartieServiceTest {
 //    public void setUp(){
 //        
 //    }
-    //@Test
+//    @Test
     public void creerNouvellePartieOk() {
-
+        
         Partie p = serviceP.creerNouvellePartie("blabla");
         assertNotNull(p.getId());
     }
 
-    @Test
+    //@Test
     public void demarrerPartieOk() {
-        //recherche partie par son id en DB
-        long id = serviceP.creerNouvellePartie("partie777").getId();
-
-        //Rejoindre 3 Joueurs
-        List<Joueur> listJoueurs = new ArrayList<>();
-        Joueur j1 = serviceJ.rejoindrePartie("AAA", "AAA", id);
-        Joueur j2 = serviceJ.rejoindrePartie("BBBB", "BBBB", id);
-        Joueur j3 = serviceJ.rejoindrePartie("CCC", "CCC", id);
         
-        listJoueurs.add(j1);
-        listJoueurs.add(j2);
-        listJoueurs.add(j3);
-
-        //Erreur si pas au moins 2 joueurs dans la partie
-        if (serviceP.recupererNbJoueursParPartieId(id) < 2) {
-            System.err.println("Erreur : nb joueurs moins 2");
-        } 
-        else
-        {
-            // passe le joueur d'ordre 1 à etat a la main
-            serviceJ.passeJoueurOrdre1EtatALaMain(id);
-
-            //distribue 7 cartes d'ingrédients au hasard à chaque joueur de la partie
-            for (Joueur j : listJoueurs) {
-                serviceC.distribue7CartesParJoueurId(j.getId());
-            }
-
-        }
+        serviceP.demarrerPartie(1);
         
     }
-
+    
+    @Test
+    public void passTour() {
+        
+        serviceJ.passTour(1, 3);
+    }
+    
 }

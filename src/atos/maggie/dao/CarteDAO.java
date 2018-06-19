@@ -25,7 +25,7 @@ public class CarteDAO {
         return query.getResultList();
     }
 
-    public void creerNouvelleCarte(Carte c) {
+    public void ajouterNouvelleCarte(Carte c) {
         EntityManager em = Persistence.createEntityManagerFactory("PU").createEntityManager();
         em.getTransaction().begin();
 
@@ -33,5 +33,9 @@ public class CarteDAO {
 
         em.getTransaction().commit();
     }
+//    public Carte distribueCarteParJoueurId(long joeurId)
+    
+    
+    
 
 }

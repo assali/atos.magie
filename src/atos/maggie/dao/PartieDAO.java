@@ -38,7 +38,7 @@ public class PartieDAO {
         em.getTransaction().commit();
     }
 
-    public Partie RecherchePartieParId(long partieId) {
+    public Partie recherchePartieParId(long partieId) {
         EntityManager em = Persistence.createEntityManagerFactory("PU").createEntityManager();
         //Query query = em.createQuery("Select p from Partie p where p.id=: idPartie");
         //query.setParameter("idPartie", partieId);
@@ -54,10 +54,5 @@ public class PartieDAO {
         query.setParameter("idPartie", partieId);
         return (long) query.getSingleResult();
     }
-
-    public void demarrerPartie() {
-
-    }
-
 
 }

@@ -31,11 +31,12 @@ public class JoueurServiceTest {
         assertEquals(8L, j.getOrdre());
     }
 
-    // @Test
+     //@Test
     public void rejoindrePartieOk() {
 
-        long id = partieService.creerNouvellePartie("nnn").getId();
-        service.rejoindrePartie("thomas", "blabla", id);
+        service.rejoindrePartie("j1", "blabla", 1);
+        service.rejoindrePartie("j2", "blabla", 1);
+        service.rejoindrePartie("j3", "blabla", 1);
 
     }
 
