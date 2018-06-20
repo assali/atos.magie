@@ -85,6 +85,5 @@ public class PartieService {
         }
         return partieEncours;
     }
-    
 
 }

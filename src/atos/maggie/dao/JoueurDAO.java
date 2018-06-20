@@ -36,6 +36,15 @@ public class JoueurDAO {
         return joueursTrouves.get(0);
     }
 
+    public Joueur rechercheJoueurQuiALaMainParPartieId(long partieId) {
+        EntityManager em = Persistence.createEntityManagerFactory("PU").createEntityManager();
+        Query query = em.createQuery("Select j from Joueur j join j.partie p where j.etat=:etat AND p.id=:idPartie");
+        query.setParameter("etat", Joueur.EtatJoueur.A_LA_MAIN);
+        query.setParameter("idPartie", partieId);
+        return (Joueur) query.getSingleResult();
+
+    }
+
     public long recupereNbJoueursALaPartie(long partieId) {
         EntityManager em = Persistence.createEntityManagerFactory("PU").createEntityManager();
         Query query = em.createQuery("Select COUNT(j.id) From Joueur j join j.partie p where p.id= :idPartie");
@@ -46,7 +55,6 @@ public class JoueurDAO {
         }
         return (long) res;
     }
-
 
     public long rechercheOrdre(long partieId) {
         EntityManager em = Persistence.createEntityManagerFactory("PU").createEntityManager();
@@ -61,24 +69,9 @@ public class JoueurDAO {
 
     public long rechercheMAXOrdre(long partieId) {
         EntityManager em = Persistence.createEntityManagerFactory("PU").createEntityManager();
-        Query query = em.createQuery("Select MAX(j.ordre) From Joueur j join j.partie p where p.id= :idPartie");
+        Query query = em.createQuery("Select MAX(j.ordre) From Joueur j join j.partie p where p.id=:idPartie");
         query.setParameter("idPartie", partieId);
-        Object res = query.getSingleResult();
-        if (res == null) {
-            return 1;
-        }
-        return (long) res;
-    }
-
-    public long rechercheMINOrdre(long partieId) {
-        EntityManager em = Persistence.createEntityManagerFactory("PU").createEntityManager();
-        Query query = em.createQuery("Select MIN(j.ordre) From Joueur j join j.partie p where p.id= :idPartie");
-        query.setParameter("idPartie", partieId);
-        Object res = query.getSingleResult();
-        if (res == null) {
-            return 1;
-        }
-        return (long) res;
+        return (long) query.getSingleResult();
     }
 
     public void ajoute(Joueur joueur) {
@@ -95,13 +88,6 @@ public class JoueurDAO {
         em.getTransaction().commit();
     }
 
-    public long rechercheJoueurOrdre1(long partieId) {
-        EntityManager em = Persistence.createEntityManagerFactory("PU").createEntityManager();
-        Query query = em.createQuery("Select j.id From Joueur j join j.partie p where j.ordre=1 AND p.id=:idPartie");
-        query.setParameter("idPartie", partieId);
-        return (long) query.getSingleResult();
-    }
-
     public Joueur rechercherParId(long joueurId) {
         EntityManager em = Persistence.createEntityManagerFactory("PU").createEntityManager();
         Query query = em.createQuery("select j From Joueur j where j.id=:id");
@@ -113,48 +99,12 @@ public class JoueurDAO {
         return joueursTrouves.get(0);
     }
 
-    //Demarrer Partie
-    public void passeJoueurOrdre1EtatALaMain(long partieId) {
-        long id = rechercheJoueurOrdre1(partieId);
+    public Joueur rechercheJoueurParPartieEtOrdre(long partieId, long ordre) {
         EntityManager em = Persistence.createEntityManagerFactory("PU").createEntityManager();
-        em.getTransaction().begin();
-        Joueur j = rechercherParId(id);
-        j.setEtat(Joueur.EtatJoueur.A_LA_MAIN);
-        em.merge(j);
-        em.getTransaction().commit();;
-    }
-
-    //Passe Tour
-    public Joueur modifierJoueurEtat(long partieId, long joueurId, long ordre, Joueur.EtatJoueur etat) {
-        EntityManager em = Persistence.createEntityManagerFactory("PU").createEntityManager();
-        Query query = em.createQuery("Select j from Joueur j join j.partie p where j.ordre=:ordre AND j.id=:id AND p.id=:idPartie");
-        query.setParameter("ordre", ordre);
-        query.setParameter("id", joueurId);
+        Query query = em.createQuery("Select j From Joueur j join j.partie p where j.ordre=:ordre AND p.id=:idPartie");
         query.setParameter("idPartie", partieId);
-        List<Joueur> joueursTrouves = query.getResultList();
-        if (joueursTrouves.isEmpty()) {
-            return null;
-        } else {
-            Joueur j = joueursTrouves.get(0);
-            j.setEtat(etat);
-            modifier(j);
-
-            return j;
-        }
-    }
-
-
-    public Joueur recupererJoueurProchain(long partieId, long ordre) {
-
-        EntityManager em = Persistence.createEntityManagerFactory("PU").createEntityManager();
-        Query query = em.createQuery("select j From Joueur j join j.partie p where j.ordre=:ordre AND p.id=:idPartie");
         query.setParameter("ordre", ordre);
-        query.setParameter("idPartie", partieId);
-        List<Joueur> joueursTrouves = query.getResultList();
-        if (joueursTrouves.isEmpty()) {
-            return null;
-        }
-        return joueursTrouves.get(0);
+        return (Joueur) query.getSingleResult();
     }
 
 }

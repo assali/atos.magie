@@ -21,7 +21,7 @@ import org.junit.Before;
  * @author Administrateur
  */
 public class PartieServiceTest {
-    
+
     private PartieService serviceP = new PartieService();
     private JoueurService serviceJ = new JoueurService();
     private CarteService serviceC = new CarteService();
@@ -32,22 +32,28 @@ public class PartieServiceTest {
 //    }
 //    @Test
     public void creerNouvellePartieOk() {
-        
+
         Partie p = serviceP.creerNouvellePartie("blabla");
         assertNotNull(p.getId());
     }
 
     //@Test
     public void demarrerPartieOk() {
-        
+
         serviceP.demarrerPartie(1);
-        
+
     }
-    
-    @Test
+
+    //@Test
     public void passTour() {
-        
-        serviceJ.passTour(1, 3);
+
+        // serviceJ.passTour(1, 3);
     }
-    
+
+    @Test
+    public void listParties() {
+        List<Partie> parties = serviceP.listerPartiesNonDemarrees();
+        System.err.println(parties.size());
+    }
+
 }

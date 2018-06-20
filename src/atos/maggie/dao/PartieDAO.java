@@ -22,10 +22,24 @@ public class PartieDAO {
     //we always start with the logic
     public List<Partie> listerPartiesNonDemarrees() {
         EntityManager em = Persistence.createEntityManagerFactory("PU").createEntityManager();
-        Query query = em.createQuery("select p from Partie p EXCEPT SELECT p from partie p join p.joueurs j where j.etat In(:etat_gagne, :etat_alamain)");
+        Query query = em.createQuery(" Select p from Partie p EXCEPT SELECT p from Partie p join p.joueurs j where j.etat=:etat_gagne or j.etat=:etat_alamain");
         query.setParameter("etat_gagne", Joueur.EtatJoueur.GAGNE);
         query.setParameter("etat_alamain", Joueur.EtatJoueur.A_LA_MAIN);
         return query.getResultList();
+    }
+
+    public boolean determineSiPlusQueUnJoueurDansPartie(long partieId) {
+        EntityManager em = Persistence.createEntityManagerFactory("PU").createEntityManager();
+        Query query = em.createQuery("Select j from Joueur j join j.partie p where p.id=:idPartie EXCEPT Select j from Joueur j join j.partie p where p.id=:idPartie AND j.etat=:etatPerdu");
+        query.setParameter("idPartie", partieId);
+        query.setParameter("etatPerdu", Joueur.EtatJoueur.PERDU);
+        List res = query.getResultList();
+//        if (res.size() != 1) {
+//            return false;
+//        }
+//        return true;
+        return res.size() == 1;
+
     }
 
     //ajouter au lieu de creer

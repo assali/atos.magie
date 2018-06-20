@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -30,6 +31,11 @@ public class Partie implements Serializable {
     @Column(nullable = false)
     private String nom;
 
+    @OneToMany(mappedBy = "partie", fetch = FetchType.EAGER)
+    private List<Joueur> joueurs=new ArrayList<>();
+
+    
+    
     public String getNom() {
         return nom;
     }
@@ -37,11 +43,7 @@ public class Partie implements Serializable {
     public void setNom(String nom) {
         this.nom = nom;
     }
-
     
-    @OneToMany(mappedBy = "partie")
-    private List<Joueur> joueurs=new ArrayList<>();
-
     public List<Joueur> getJoueurs() {
         return joueurs;
     }
