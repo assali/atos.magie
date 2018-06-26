@@ -21,6 +21,11 @@ public class JoueurServiceTest {
     private JoueurService service = new JoueurService();
     private PartieService partieService = new PartieService();
 
+    @Test
+    public void joueurSuivantOK() {
+        service.passeJoueurSuivant(1);
+    }
+    
     //@Test
     public void ordreJoueursOk() {
         Partie nouvellePartie = partieService.creerNouvellePartie("ordreJoueursOk");
@@ -31,7 +36,7 @@ public class JoueurServiceTest {
         assertEquals(8L, j.getOrdre());
     }
 
-     //@Test
+    //@Test
     public void rejoindrePartieOk() {
 
         service.rejoindrePartie("j1", "blabla", 1);
@@ -40,4 +45,8 @@ public class JoueurServiceTest {
 
     }
 
+//    @Test
+    public void passTourOk() {
+        service.passTour(2, 25);
+    }
 }

@@ -7,7 +7,10 @@ package atos.maggie.service;
 
 import atos.maggie.dao.CarteDAO;
 import atos.maggie.dao.JoueurDAO;
+import atos.maggie.dao.PartieDAO;
 import atos.maggie.entity.Carte;
+import atos.maggie.entity.Joueur;
+import atos.maggie.entity.Partie;
 import java.util.List;
 import java.util.Random;
 
@@ -19,8 +22,11 @@ public class CarteService {
     
     private CarteDAO dao = new CarteDAO();
     private JoueurDAO daoJ = new JoueurDAO();
+    private PartieDAO daoP = new PartieDAO();
     
-    public Carte distribueCarteParJoueurId(long joeurId) {
+    public Carte distribueCarteParJoueurIdEtPartieId(long joeurId, long partieId) {
+        Joueur j = daoJ.rechercherParId(joeurId);
+        Partie p = daoP.recherchePartieParId(partieId);
         Carte c = new Carte();
 
         //autre solution
@@ -53,15 +59,21 @@ public class CarteService {
         //autre solution
         //  c.setIngredient(tabIngredients[num1]);
 
-        c.setJoueurProprietaire(daoJ.rechercherParId(joeurId));
+        c.setJoueur(daoJ.rechercherParId(joeurId));
+        c.setIsChosen(0);
         dao.ajouterNouvelleCarte(c);
+
+        //here
+//        for (Joueur joueur : p.getJoueurs()) {
+//            if (joueur.getId() == j.getId()) {
+//                joueur.getCartes().add(c);
+//            }
+//        }
+        j.getCartes().add(c);
+        daoP.modifier(p);
+        daoJ.modifier(j);
+        
         return c;
-    }
-    
-    public void distribue7CartesParJoueurId(long joueurId) {
-        for (int i = 0; i < 7; i++) {
-            distribueCarteParJoueurId(joueurId);
-        }
     }
     
     public List<Carte> listerCarteParJoueurId(long joueurId) {
@@ -70,6 +82,21 @@ public class CarteService {
     
     public void creerNouvelleCarte(Carte c) {
         dao.ajouterNouvelleCarte(c);
+    }
+    
+    void distribue7CartesParJoueurIdEtPartieId(Long id, long idPartie) {
+        for (int i = 0; i < 7; i++) {
+            distribueCarteParJoueurIdEtPartieId(id, idPartie);
+        }
+    }
+    
+    public Carte recupererCarteParJouerIdEtIngredient(long joueurId, Carte.Ingredient ingredient) {
+        return dao.recupererCarteParJouerIdEtIngredient(joueurId, ingredient);
+    }
+
+
+    public void supprimerCarteParJoueurId(long joueurId, Long carteId) {
+        dao.supprimerCarte(carteId);
     }
     
 }

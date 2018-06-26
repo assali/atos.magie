@@ -5,6 +5,7 @@
     <class>atos.maggie.entity.Joueur</class>
     <class>atos.maggie.entity.Carte</class>
     <class>atos.maggie.entity.Partie</class>
+    <shared-cache-mode>NONE</shared-cache-mode>
     <properties>
       <property name="javax.persistence.jdbc.url" value="jdbc:derby://localhost:1527/sample2"/>
       <property name="javax.persistence.jdbc.user" value="app"/>

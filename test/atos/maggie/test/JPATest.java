@@ -14,10 +14,12 @@ import static org.junit.Assert.*;
  * @author Administrateur
  */
 public class JPATest {
-    
+
     @Test
     public void demarreJPA() {
+
+        
         Persistence.createEntityManagerFactory("PU");
     }
-    
+
 }

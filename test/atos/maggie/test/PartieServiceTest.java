@@ -45,15 +45,39 @@ public class PartieServiceTest {
     }
 
     //@Test
-    public void passTour() {
-
-        // serviceJ.passTour(1, 3);
+    public void listerJoueursPArPartieId() {
+        List<Joueur> list = serviceP.listerJoueursParPartieId(1);
+        assertEquals(list.size(), 4);
     }
 
-    @Test
+    // @Test
     public void listParties() {
         List<Partie> parties = serviceP.listerPartiesNonDemarrees();
         System.err.println(parties.size());
     }
 
+    //@Test
+    public void sort1Ok() {
+        serviceP.sortInvisibilite(1, 1);
+    }
+
+    //@Test
+    public void sort2Ok() {
+        serviceP.sortPhiltreAmour(1, 1, 2);
+    }
+
+    //@Test
+    public void sort3Ok() {
+        serviceP.sortHypnose(1, 1, 2, 1);
+    }
+
+    @Test
+    public void sort4Ok() {
+        serviceP.sortDivination(1, 1);
+    }
+
+    //@Test
+    public void sort5Ok() {
+        serviceP.sortSommeilProfond(1, 1, 2);
+    }
 }

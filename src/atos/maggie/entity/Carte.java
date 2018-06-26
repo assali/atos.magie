@@ -45,6 +45,24 @@ public class Carte implements Serializable {
     @ManyToOne
     @JoinColumn
     private Joueur joueur;
+    
+    private int isChosen;
+
+    public Joueur getJoueur() {
+        return joueur;
+    }
+
+    public void setJoueur(Joueur joueur) {
+        this.joueur = joueur;
+    }
+
+    public int getIsChosen() {
+        return isChosen;
+    }
+
+    public void setIsChosen(int isChosen) {
+        this.isChosen = isChosen;
+    }
 
     public Ingredient getIngredient() {
         return ingredient;
@@ -52,14 +70,6 @@ public class Carte implements Serializable {
 
     public void setIngredient(Ingredient ingredient) {
         this.ingredient = ingredient;
-    }
-
-    public Joueur getJoueurProprietaire() {
-        return joueur;
-    }
-
-    public void setJoueurProprietaire(Joueur joueurProprietaire) {
-        this.joueur = joueurProprietaire;
     }
 
     public Long getId() {

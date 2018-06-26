@@ -28,11 +28,22 @@ public class PartieDAO {
         return query.getResultList();
     }
 
+    public List<Partie> listerPartiesDemarres() {
+        EntityManager em = Persistence.createEntityManagerFactory("PU").createEntityManager();
+        Query query = em.createQuery(" Select p from Partie p INTERSECT SELECT p from Partie p join p.joueurs j where j.etat=:etat_gagne or j.etat=:etat_alamain");
+        query.setParameter("etat_gagne", Joueur.EtatJoueur.GAGNE);
+        query.setParameter("etat_alamain", Joueur.EtatJoueur.A_LA_MAIN);
+        return query.getResultList();
+    }
+
     public boolean determineSiPlusQueUnJoueurDansPartie(long partieId) {
         EntityManager em = Persistence.createEntityManagerFactory("PU").createEntityManager();
         Query query = em.createQuery("Select j from Joueur j join j.partie p where p.id=:idPartie EXCEPT Select j from Joueur j join j.partie p where p.id=:idPartie AND j.etat=:etatPerdu");
         query.setParameter("idPartie", partieId);
         query.setParameter("etatPerdu", Joueur.EtatJoueur.PERDU);
+        //ToDO
+        //query.setParameter("etatSommeil", Joueur.EtatJoueur.SOMMEIL_PROFOND);
+        
         List res = query.getResultList();
 //        if (res.size() != 1) {
 //            return false;
@@ -67,6 +78,29 @@ public class PartieDAO {
         Query query = em.createQuery("Select COUNT(j.id) from Joueur j Join j.partie p where p.id=:idPartie");
         query.setParameter("idPartie", partieId);
         return (long) query.getSingleResult();
+    }
+
+    public List<Joueur> listerJoueursParPartieId(long partieId) {
+        EntityManager em = Persistence.createEntityManagerFactory("PU").createEntityManager();
+        Query query = em.createQuery("Select p.joueurs from Partie p where p.id=:id");
+        query.setParameter("id", partieId);
+        return query.getResultList();
+    }
+
+    public void modifier(Partie p) {
+        EntityManager em = Persistence.createEntityManagerFactory("PU").createEntityManager();
+        em.getTransaction().begin();
+        em.merge(p);
+        em.getTransaction().commit();
+    }
+
+    public List<Joueur> listerAdversairesParPartieIdEtJoueurId(long joueurId, long partieId) {
+        EntityManager em=Persistence.createEntityManagerFactory("PU").createEntityManager();
+        Query query=em.createQuery("Select j from Partie p join p.joueurs j where p.id=:idPartie AND j.id<>:idJoueur AND j.etat=:etat");
+        query.setParameter("idJoueur", joueurId);
+        query.setParameter("idPartie", partieId);
+        query.setParameter("etat", Joueur.EtatJoueur.N_A_PAS_LA_MAIN);
+        return query.getResultList();
     }
 
 }
